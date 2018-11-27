@@ -3,7 +3,7 @@ package de.kotlincook.vaadin
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 
-open class ExtVertivalLayout: VerticalLayout() {
+open class ExtVerticalLayout: VerticalLayout() {
 
     val components: MutableList<Component> = mutableListOf()
 
