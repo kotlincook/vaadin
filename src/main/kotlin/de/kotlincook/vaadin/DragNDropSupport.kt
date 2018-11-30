@@ -3,8 +3,21 @@ package de.kotlincook.vaadin
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEvent
 import com.vaadin.flow.component.DomEvent
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.page.Page
 import com.vaadin.flow.dom.Element
+
+const val ATTR_KEY_DRAGGED_COMPONENT = "DRAGGED_COMPONENT"
+
+fun pullDraggedComponent(): Component? {
+    val draggedComp = UI.getCurrent().session.getAttribute(ATTR_KEY_DRAGGED_COMPONENT) as Component?
+    UI.getCurrent().session.setAttribute(ATTR_KEY_DRAGGED_COMPONENT, null)
+    return draggedComp
+}
+
+fun pushDraggedComponent(component: Component) {
+    UI.getCurrent().session.setAttribute(ATTR_KEY_DRAGGED_COMPONENT, component)
+}
 
 @DomEvent("dragstart")
 class DragstartEvent<T : Component>(source : T, fromClient : Boolean) : ComponentEvent<T>(source, fromClient)
@@ -32,10 +45,13 @@ fun Page.addDropSupport(element: Element) {
     |   // this.style.backgroundColor = 'yellow';
     |   e.preventDefault();
     |}
-    |$0.addEventListener('dragover', handleDragover, false);
-    |$0.addEventListener('dragenter', handleDragEnter, false);
-    |$0.addEventListener('dragleave', handleDragLeave, false);
-    |$0.addEventListener('drop', handleDrop, false);
+    |// $0 kann unter Umständen wirklich null sein
+    |if ($0 != null) {
+    |   $0.addEventListener('dragover', handleDragover, false);
+    |   $0.addEventListener('dragenter', handleDragEnter, false);
+    |   $0.addEventListener('dragleave', handleDragLeave, false);
+    |   $0.addEventListener('drop', handleDrop, false);
+    |}
     """.trimMargin(), element)
 }
 
@@ -53,7 +69,12 @@ fun Page.addDragSupport(element: Element) {
     |function handleDragEnd(e) {
     |   this.style.opacity = '';
     |}
-    |$0.addEventListener('dragstart', handleDragStart, false);
-    |$0.addEventListener('dragend', handleDragEnd, false);
+    |
+    |// $0 kann unter Umständen wirklich null sein
+    |if ($0 != null) {
+    |   $0.addEventListener('dragstart', handleDragStart, false);
+    |   $0.addEventListener('dragend', handleDragEnd, false);
+    |}
     """.trimMargin(), element)
+
 }
